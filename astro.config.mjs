@@ -14,8 +14,8 @@ export default defineConfig({
     // Your existing server proxy for local development
     server: {
         proxy: {
-          '/admin': 'http://localhost:4001',
-          '/graphql': 'http://localhost:4001',
+          '/admin': 'http://0.0.0.0:4001',
+          '/graphql': 'http://0.0.0.0:4001',
         },
     },
 
