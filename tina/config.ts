@@ -3,6 +3,10 @@ import { BlogCollection } from "./collections/blog";
 import { GlobalConfigCollection } from "./collections/global-config";
 import { PageCollection } from "./collections/page";
 
+// Check if the '--local' flag is present in the command-line arguments.
+// This is a more direct way to detect if we are running a local-only build.
+const isLocalBuild = process.argv.includes('--local');
+
 // Your hosting provider likely exposes this as an environment variable
 const branch =
   process.env.GITHUB_BRANCH ||
@@ -10,13 +14,22 @@ const branch =
   process.env.HEAD ||
   "main";
 
-export default defineConfig({
+// Define the cloud-specific configuration in its own object
+const cloudConfig = {
   branch,
-
   // Get this from tina.io
   clientId: process.env.PUBLIC_TINA_CLIENT_ID,
   // Get this from tina.io
   token: process.env.TINA_TOKEN,
+}
+
+export default defineConfig({
+  branch,
+  
+  // Conditionally spread the cloud config.
+  // When '--local' is used, this will be an empty object, completely removing the cloud keys
+  // and forcing a true local build.
+  ...(isLocalBuild ? {} : cloudConfig),
 
   build: {
     outputFolder: "admin",
@@ -35,34 +48,5 @@ export default defineConfig({
       PageCollection,
       GlobalConfigCollection,
     ],
-  },
-  // ADMIN BLOCK TO PROVIDE A DUMMY AUTH FOR THE BUILD PROCESS for Self Hosting on Github Pages
-  // This is necessary because the Tina Cloud build process requires authentication.
-  // If you are using Tina Cloud, you can remove this block.
-  // If you are self-hosting, you can use this block to provide a dummy authentication
-  // that satisfies the build process without needing a real user.
-  // This will allow the build to complete successfully, but you will not be able to use
-  // the admin interface to manage content.
-  admin: {
-    auth: {
-      customAuth: true,
-      // This function now reads a token from the environment variables,
-      // which is standard practice for CI/CD.
-      getToken: async () => {
-        return {
-          id_token: process.env.TINA_TOKEN,
-        }
-      },
-      // These functions are not called during the build, but are required by the type definition.
-      getUser: async () => {
-        return
-      },
-      authenticate: async () => {
-        // Does nothing
-      },
-      logOut: async () => {
-        // Does nothing
-      },
-    },
   },
 });
