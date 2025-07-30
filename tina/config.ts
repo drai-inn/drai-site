@@ -46,20 +46,17 @@ export default defineConfig({
   admin: {
     auth: {
       customAuth: true,
-      // A dummy function to satisfy the build process. Returns a fake token.
+      // This function now reads a token from the environment variables,
+      // which is standard practice for CI/CD.
       getToken: async () => {
         return {
-          id_token: 'dummy-token-for-ci', // Can be any string
+          id_token: process.env.TINA_TOKEN,
         }
       },
-      // A dummy function to satisfy the build process. Returns a fake user.
+      // These functions are not called during the build, but are required by the type definition.
       getUser: async () => {
-        return {
-          name: 'CI User',
-          roles: ['admin'],
-        }
+        return
       },
-      // These functions are not called during the build, but need to exist.
       authenticate: async () => {
         // Does nothing
       },
