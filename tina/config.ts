@@ -36,4 +36,36 @@ export default defineConfig({
       GlobalConfigCollection,
     ],
   },
+  // ADMIN BLOCK TO PROVIDE A DUMMY AUTH FOR THE BUILD PROCESS for Self Hosting on Github Pages
+  // This is necessary because the Tina Cloud build process requires authentication.
+  // If you are using Tina Cloud, you can remove this block.
+  // If you are self-hosting, you can use this block to provide a dummy authentication
+  // that satisfies the build process without needing a real user.
+  // This will allow the build to complete successfully, but you will not be able to use
+  // the admin interface to manage content.
+  admin: {
+    auth: {
+      customAuth: true,
+      // A dummy function to satisfy the build process. Returns a fake token.
+      getToken: async () => {
+        return {
+          id_token: 'dummy-token-for-ci', // Can be any string
+        }
+      },
+      // A dummy function to satisfy the build process. Returns a fake user.
+      getUser: async () => {
+        return {
+          name: 'CI User',
+          roles: ['admin'],
+        }
+      },
+      // These functions are not called during the build, but need to exist.
+      authenticate: async () => {
+        // Does nothing
+      },
+      logOut: async () => {
+        // Does nothing
+      },
+    },
+  },
 });
