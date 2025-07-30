@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "TINA_TOKEN='dummy-token-for-ci' tinacms build --local && astro build",
+    "build": "TINA_TOKEN='dummy-token-for-ci' tinacms build --local --skip-cloud-checks && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
