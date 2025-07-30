@@ -91,3 +91,9 @@ Check out the [TinaCMS documentation](https://tina.io/docs) and the [Astro docum
 ## Credit
 
 This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+
+---
+
+## Contributing
+
+This project welcomes contributions. Please see the [**CONTRIBUTING.md**](./CONTRIBUTING.md) file for guidelines on how to get started with the development environment and submit changes.
