@@ -7,7 +7,11 @@ import tinaDirective from "./astro-tina-directive/register"
 
 // https://astro.build/config
 export default defineConfig({
-    // This is the new block to add for the dev server
+    // CONFIG FOR GITHUB PAGES
+    site: 'https://ndjones.github.io',
+    base: '/drai-site',
+
+    // Your existing server proxy for local development
     server: {
         proxy: {
           '/admin': 'http://localhost:4001',
@@ -15,7 +19,6 @@ export default defineConfig({
         },
     },
 
-    // Your existing site and integrations configuration
-    site: process.env.SITE_URL || `https://${process.env.VERCEL_URL}`,
+    // Your existing integrations
     integrations: [mdx(), sitemap(), react(), tinaDirective()],
 });
