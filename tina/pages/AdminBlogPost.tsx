@@ -21,10 +21,20 @@ export default function AdminBlogPost(props: Props) {
 
 	const blog = data.blog;
 
+	// Helper to fix image paths with base URL
+	const getImageSrc = (heroImage: string) => {
+		// If image starts with /, prepend base URL
+		if (heroImage?.startsWith('/')) {
+			const baseUrl = (import.meta.env?.BASE_URL || '/').replace(/\/$/, '');
+			return baseUrl + heroImage;
+		}
+		return heroImage; // Return as-is for external URLs or relative paths
+	};
+
 	return (
 		<article>
 			<div data-tina-field={tinaField(blog, "heroImage")} className="hero-image">
-				{blog.heroImage && <img width={1020} height={510} src={blog.heroImage} alt="" />}
+				{blog.heroImage && <img width={1020} height={510} src={getImageSrc(blog.heroImage)} alt="" />}
 			</div>
 			<div className="prose">
 				<div className="title">
