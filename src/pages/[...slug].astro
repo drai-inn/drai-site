@@ -8,14 +8,36 @@ import BaseHead from "../components/BaseHead.astro";
 import config from '../content/config/config.json';
 
 export async function getStaticPaths() {
-	const page = await getCollection("page");
-	return page.map((p) => ({
+	const pages = await getCollection("page");
+	return pages.map((p) => ({
 		params: { slug: p.id },
 		props: {
-			getTinaProps: async () =>
-				client.queries.page({
-					relativePath: p.data.tinaInfo.relativePath,
-				}),
+			page: p,
+			getTinaProps: async () => {
+				// Check if TinaCMS data is available (dev mode)
+				if (p.data.tinaInfo?.relativePath) {
+					try {
+						return await client.queries.page({
+							relativePath: p.data.tinaInfo.relativePath,
+						});
+					} catch (error) {
+						console.warn('TinaCMS query failed for page, using static content:', error.message);
+					}
+				}
+				// Fallback for static builds - return the page data in TinaCMS format
+				return {
+					data: {
+						page: {
+							...p.data,
+							body: p.body || '',
+							_sys: {
+								filename: p.id,
+								relativePath: `${p.id}.mdx`
+							}
+						}
+					}
+				};
+			},
 		},
 	}));
 }

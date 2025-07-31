@@ -11,10 +11,31 @@ export async function getStaticPaths() {
 		params: { slug: post.id },
 		props: {
 			post,
-			getTinaProps: async () =>
-				client.queries.blog({
-					relativePath: post.data.tinaInfo.relativePath,
-				}),
+			getTinaProps: async () => {
+				// Check if TinaCMS data is available (dev mode)
+				if (post.data.tinaInfo?.relativePath) {
+					try {
+						return await client.queries.blog({
+							relativePath: post.data.tinaInfo.relativePath,
+						});
+					} catch (error) {
+						console.warn('TinaCMS query failed, using static content:', error.message);
+					}
+				}
+				// Fallback for static builds - return the post data in TinaCMS format
+				return {
+					data: {
+						blog: {
+							...post.data,
+							body: post.body || '',
+							_sys: {
+								filename: post.id,
+								relativePath: `${post.id}.mdx`
+							}
+						}
+					}
+				};
+			},
 		},
 	}));
 }
