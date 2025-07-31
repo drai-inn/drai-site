@@ -3,6 +3,7 @@ import { tinaField, useTina } from "tinacms/dist/react";
 import type { BlogQuery, BlogQueryVariables } from '../__generated__/types';
 import { TinaMarkdown } from 'tinacms/dist/rich-text'
 import FormattedDate from '../../src/components/react/FormattedDate.tsx';
+import ReactMarkdown from 'react-markdown';
 
 
 type Props = {
@@ -52,7 +53,11 @@ export default function AdminBlogPost(props: Props) {
 					<hr />
 				</div>
 				<div data-tina-field={tinaField(blog, "body")}>
-					<TinaMarkdown content={blog.body} />
+					{typeof blog.body === 'string' ? (
+						<ReactMarkdown>{blog.body}</ReactMarkdown>
+					) : (
+						<TinaMarkdown content={blog.body} />
+					)}
 				</div>
 			</div>
 		</article>
