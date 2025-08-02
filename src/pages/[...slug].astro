@@ -36,7 +36,17 @@ export async function getStaticPaths() {
 								relativePath: `${p.id}.mdx`
 							}
 						}
-					}
+					},
+					variables: {
+						relativePath: `${p.id}.mdx`
+					},
+					query: `query page($relativePath: String!) {
+						page(relativePath: $relativePath) {
+							... on Page {
+								body
+							}
+						}
+					}`
 				};
 			},
 		},

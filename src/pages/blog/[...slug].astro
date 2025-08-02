@@ -34,7 +34,21 @@ export async function getStaticPaths() {
 								relativePath: `${post.id}.mdx`
 							}
 						}
-					}
+					},
+					variables: {
+						relativePath: `${post.id}.mdx`
+					},
+					query: `query blog($relativePath: String!) {
+						blog(relativePath: $relativePath) {
+							... on Blog {
+								title
+								description
+								pubDate
+								heroImage
+								body
+							}
+						}
+					}`
 				};
 			},
 		},

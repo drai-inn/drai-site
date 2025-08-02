@@ -35,7 +35,17 @@ if (!data) {
             relativePath: `${homePage.id}.mdx`
           }
         }
-      }
+      },
+      variables: {
+        relativePath: 'home.mdx'
+      },
+      query: `query page($relativePath: String!) {
+        page(relativePath: $relativePath) {
+          ... on Page {
+            body
+          }
+        }
+      }`
     };
   } else {
     // Ultimate fallback
