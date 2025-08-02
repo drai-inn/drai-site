@@ -8,18 +8,19 @@ import tinaDirective from "./astro-tina-directive/register"
 // https://astro.build/config
 export default defineConfig({
     // CONFIG FOR GITHUB PAGES
-    site: 'https://ndjones.github.io',
+    site: 'https://drai-inn.github.io',
     base: '/drai-site',
-
-    // Your existing server proxy for local development
-    server: {
-        proxy: {
-          '/drai-site/admin': 'http://0.0.0.0:4001/admin',
-          '/admin': 'http://0.0.0.0:4001',
-          '/graphql': 'http://0.0.0.0:4001',
-        },
-    },
 
     // Your existing integrations
     integrations: [mdx(), sitemap(), react(), tinaDirective()],
+
+    vite: {
+        server: {
+            proxy: {
+                '/drai-site/admin': 'http://0.0.0.0:4001/admin',
+                '/admin': 'http://0.0.0.0:4001',
+                '/graphql': 'http://0.0.0.0:4001',
+            },
+        },
+    }
 });
