@@ -6,10 +6,12 @@ import config from '../content/config/config.json';
 import client from '../../tina/__generated__/client';
 import HomePage from "../../tina/pages/HomePage.tsx";
 import { getCollection } from "astro:content";
+import { Fragment } from "astro/types";
 
 // Get page data. In dev mode, we use the Tina client. In production, we use
 // static content from Astro's getCollection.
 let data;
+let content;
 if (import.meta.env.DEV) {
   // Use Tina client in development
   try {
@@ -25,6 +27,7 @@ if (!data) {
   const homePage = pages.find(page => page.id === 'home');
   
   if (homePage) {
+    content = homePage.body;
     data = {
       data: {
         page: {
@@ -49,6 +52,7 @@ if (!data) {
     };
   } else {
     // Ultimate fallback
+    content = "<h1>Welcome</h1><p>This is the home page.</p>";
     data = {
       data: {
         page: {
@@ -73,7 +77,13 @@ if (!data) {
 	</head>
 	<body>
 		<Header />
-		<HomePage {...data} client:tina />
+		{import.meta.env.DEV ? (
+			<HomePage {...data} client:tina />
+		) : (
+			<main>
+				<div set:html={content} />
+			</main>
+		)}
 		<Footer />
 	</body>
 </html>

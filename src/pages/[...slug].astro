@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import BaseHead from "../components/BaseHead.astro";
 import config from '../content/config/config.json';
+import { Fragment } from "astro/types";
 
 export async function getStaticPaths() {
 	const pages = await getCollection("page");
@@ -53,7 +54,7 @@ export async function getStaticPaths() {
 	}));
 }
 
-const { getTinaProps } = Astro.props;
+const { page, getTinaProps } = Astro.props;
 const data = await getTinaProps();
 ---
 
@@ -64,7 +65,13 @@ const data = await getTinaProps();
 	</head>
 	<body>
 		<Header />
-				<Page {...data} client:tina />
+		{import.meta.env.DEV ? (
+			<Page {...data} client:tina />
+		) : (
+			<main>
+				<div set:html={page.body} />
+			</main>
+		)}
 		<Footer />
 	</body>
 </html>
