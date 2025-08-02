@@ -14,14 +14,15 @@ export async function getStaticPaths() {
 		props: {
 			page: p,
 			getTinaProps: async () => {
-				// Check if TinaCMS data is available (dev mode)
-				if (p.data.tinaInfo?.relativePath) {
+				// In dev mode, we use the Tina client. In production, we use
+				// static content from Astro's getCollection.
+				if (import.meta.env.DEV) {
 					try {
 						return await client.queries.page({
 							relativePath: p.data.tinaInfo.relativePath,
 						});
 					} catch (error) {
-						console.warn('TinaCMS query failed for page, using static content:', error.message);
+						console.log('TinaCMS query failed for page, using static content. This is expected if the dev server is not running.');
 					}
 				}
 				// Fallback for static builds - return the page data in TinaCMS format
@@ -57,4 +58,3 @@ const data = await getTinaProps();
 		<Footer />
 	</body>
 </html>
-

@@ -1,8 +1,8 @@
 {
   "seo": {
-    "title": "Astro Blog + Tina",
-    "description": "Welcome to my website!",
-    "siteOwner": "Your name here"
+    "title": "Digital Research Innovation & Artificial Intelligence",
+    "description": "Digital Research Innovation & Artificial Intelligence group at the University of Auckland. Building emerging products, platforms, and capabilities in advanced data platforms and AI for science. Informed by indigenous values and close-to-researcher perspectives.",
+    "siteOwner": "University of Auckland"
   },
   "nav": [
     {
@@ -10,7 +10,7 @@
       "link": "/"
     },
     {
-      "title": "Blog",
+      "title": "Updates",
       "link": "/blog"
     },
     {
@@ -20,18 +20,13 @@
   ],
   "contactLinks": [
     {
-      "title": "Twitter",
-      "link": "https://x.com/tinacms",
-      "icon": "TbBrandTwitter"
+      "title": "Documentation",
+      "link": "/drai-site/docs",
+      "icon": "TbList"
     },
     {
-      "title": "Docs",
-      "link": "https://tina.io/docs",
-      "icon": "TbBook2"
-    },
-    {
-      "title": "GitHub",
-      "link": "https://github.com/tinacms/tinacms",
+      "title": "DRAI Innovation GitHub",
+      "link": "https://github.com/drai-inn",
       "icon": "TbBrandGithub"
     }
   ]

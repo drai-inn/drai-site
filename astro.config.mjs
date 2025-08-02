@@ -14,6 +14,7 @@ export default defineConfig({
     // Your existing server proxy for local development
     server: {
         proxy: {
+          '/drai-site/admin': 'http://0.0.0.0:4001/admin',
           '/admin': 'http://0.0.0.0:4001',
           '/graphql': 'http://0.0.0.0:4001',
         },

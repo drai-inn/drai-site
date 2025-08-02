@@ -12,14 +12,15 @@ export async function getStaticPaths() {
 		props: {
 			post,
 			getTinaProps: async () => {
-				// Check if TinaCMS data is available (dev mode)
-				if (post.data.tinaInfo?.relativePath) {
+				// In dev mode, we use the Tina client. In production, we use
+				// static content from Astro's getCollection.
+				if (import.meta.env.DEV) {
 					try {
 						return await client.queries.blog({
 							relativePath: post.data.tinaInfo.relativePath,
 						});
 					} catch (error) {
-						console.warn('TinaCMS query failed, using static content:', error.message);
+						console.log('TinaCMS query failed, using static content. This is expected if the dev server is not running.');
 					}
 				}
 				// Fallback for static builds - return the post data in TinaCMS format

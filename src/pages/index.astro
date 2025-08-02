@@ -7,13 +7,20 @@ import client from '../../tina/__generated__/client';
 import HomePage from "../../tina/pages/HomePage.tsx";
 import { getCollection } from "astro:content";
 
-// Get page data with fallback for static builds
+// Get page data. In dev mode, we use the Tina client. In production, we use
+// static content from Astro's getCollection.
 let data;
-try {
-  data = await client.queries.page({relativePath: "home.mdx"});
-} catch (error) {
-  console.warn('TinaCMS client failed for home page, using static content:', error.message);
-  // Fallback: get home page from collections
+if (import.meta.env.DEV) {
+  // Use Tina client in development
+  try {
+    data = await client.queries.page({relativePath: "home.mdx"});
+  } catch (error) {
+    console.log('TinaCMS client failed for home page, using static content. This is expected if the dev server is not running.');
+  }
+}
+
+if (!data) {
+  // Use static content for production builds or if Tina client fails
   const pages = await getCollection("page");
   const homePage = pages.find(page => page.id === 'home');
   
