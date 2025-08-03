@@ -2,6 +2,7 @@ import { defineConfig } from "tinacms";
 import { BlogCollection } from "./collections/blog";
 import { GlobalConfigCollection } from "./collections/global-config";
 import { PageCollection } from "./collections/page";
+import { StudyCollection } from "./collections/study";
 
 // Your hosting provider likely exposes this as an environment variable
 const branch =
@@ -34,6 +35,11 @@ export default defineConfig({
     collections: [
       BlogCollection,
       PageCollection,
+      StudyCollection,
+      
+      // GlobalConfigCollection is a special collection that allows you to manage global settings for your site
+      // It is not a content collection, but rather a configuration collection
+      // You can use it to store site-wide settings like site title, description, etc.
       GlobalConfigCollection,
     ],
   },

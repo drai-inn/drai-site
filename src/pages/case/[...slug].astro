@@ -1,25 +1,25 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro"
+import CaseStudy from "../../layouts/Case.astro";
 import client from "../../../tina/__generated__/client";
-import AdminBlogPost from "../../../tina/pages/AdminBlogPost";
+import AdminStudy from "../../../tina/pages/AdminStudy";
 import { Fragment } from "astro/types";
 import { marked } from "marked";
 
 export async function getStaticPaths() {
-	const posts = await getCollection("blog");
+	const cases = await getCollection("study");
 
-	return posts.map((post) => ({
-		params: { slug: post.id },
+	return cases.map((study) => ({
+		params: { slug: study.id },
 		props: {
-			post,
+			study,
 			getTinaProps: async () => {
 				// In dev mode, we use the Tina client. In production, we use
 				// static content from Astro's getCollection.
 				if (import.meta.env.DEV) {
 					try {
-						return await client.queries.blog({
-							relativePath: post.data.tinaInfo.relativePath,
+						return await client.queries.study({
+							relativePath: study.data.tinaInfo.relativePath,
 						});
 					} catch (error) {
 						console.log('TinaCMS query failed, using static content. This is expected if the dev server is not running.');
@@ -28,25 +28,24 @@ export async function getStaticPaths() {
 				// Fallback for static builds - return the post data in TinaCMS format
 				return {
 					data: {
-						blog: {
-							...post.data,
-							body: post.body || '',
+						study: {
+							...study.data,
+							body: study.body || '',
 							_sys: {
-								filename: post.id,
-								relativePath: `${post.id}.mdx`
+								filename: study.id,
+								relativePath: `${study.id}.mdx`
 							}
 						}
 					},
 					variables: {
-						relativePath: `${post.id}.mdx`
+						relativePath: `${study.id}.mdx`
 					},
-					query: `query blog($relativePath: String!) {
-						blog(relativePath: $relativePath) {
-							... on Blog {
+					query: `query study($relativePath: String!) {
+						study(relativePath: $relativePath) {
+							... on Study {
 								title
 								description
 								pubDate
-								heroImage
 								body
 							}
 						}
@@ -57,16 +56,15 @@ export async function getStaticPaths() {
 	}));
 }
 
-const { post, getTinaProps } = Astro.props;
+const { study, getTinaProps } = Astro.props;
 const data = await getTinaProps();
-const html = marked(post.body || "");
+const html = marked(study.body || "");
 ---
 
-<BlogPost {...data}>
+<CaseStudy {...data}>
 	{import.meta.env.DEV ? (
-		<AdminBlogPost {...data} client:tina/>
+		<AdminStudy {...data} client:tina/>
 	) : (
 		<div set:html={html} />
 	)}
 </BlogPost>
-	

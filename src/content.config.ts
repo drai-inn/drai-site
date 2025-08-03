@@ -40,6 +40,42 @@ const createStaticBlogLoader = () => {
   };
 };
 
+// Static content loader for production builds (when TinaCMS server is not available)
+const createStaticCaseLoader = () => {
+  // Check if we're in a build environment without TinaCMS server
+  const isStaticBuild = process.env.NODE_ENV === 'production' || process.env.ASTRO_BUILD === 'true';
+  
+  if (isStaticBuild) {
+    // Use file-based loading for static builds
+    return glob({ pattern: "**/*.{md,mdx}", base: "./src/content/case" });
+  }
+  
+  // Use TinaCMS client for dev builds (when server is running)
+  return async () => {
+    try {
+      const casesResponse = await client.queries.studyConnection();
+
+      // Map Tina posts to the correct format for Astro
+      return casesResponse.data.studyConnection.edges
+        ?.filter((study) => !!study)
+        .map((study) => {
+          const node = study?.node;
+          
+          return {
+            ...node,
+            id: node?._sys.relativePath.replace(/\.mdx?$/, ""), // Generate clean URLs
+            tinaInfo: node?._sys, // Include Tina system info if needed
+          };
+        });
+    } catch (error) {
+      console.warn('TinaCMS client failed, falling back to file-based loading:', error.message);
+      // Fallback to file-based loading if TinaCMS client fails
+      const globLoader = glob({ pattern: "**/*.{md,mdx}", base: "./src/content/case" });
+      return typeof globLoader === 'function' ? await globLoader() : globLoader;
+    }
+  };
+};
+
 const blog = defineCollection({
   loader: createStaticBlogLoader(),
   schema: z.object({
@@ -55,6 +91,30 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     heroImage: z.string().nullish(),
+  }),
+});
+
+const study = defineCollection({
+  loader: createStaticCaseLoader(),
+  schema: z.object({
+    // Make tinaInfo optional for static loading
+    tinaInfo: z.object({
+      filename: z.string(),
+      basename: z.string(),
+      path: z.string(),
+      relativePath: z.string(),
+    }).optional(),
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    heroImage: z.string().nullish(),
+    sector: z.string(),
+    case_link: z.string(),
+    cta: z.string(),
+    image: z.string(),
+    image_alt: z.string(),
+    bg: z.string(),
   }),
 });
 
@@ -108,4 +168,4 @@ const page = defineCollection({
     body: z.any().optional(), // Body might not be present in static mode
   }),
 })
-export const collections = { blog, page };
+export const collections = { blog, study, page };
