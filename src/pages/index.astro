@@ -1,13 +1,39 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import config from '../content/config/config.json';
-import client from '../../tina/__generated__/client';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import config from "../content/config/config.json";
+import client from "../../tina/__generated__/client";
 import HomePage from "../../tina/pages/HomePage.tsx";
 import { getCollection } from "astro:content";
 import { Fragment } from "astro/types";
-import { marked } from 'marked';
+import { marked } from "marked";
+
+// blackspike template imports https://github.com/blackspike/blackspike-astro-landing-page
+
+import Layout from "../layouts/Layout.astro";
+
+import CaseStudiesSection from "../components/CaseStudiesSection.astro";
+import ClientsSection from "../components/ClientsSection.astro";
+import FaqSection from "../components/FaqSection.astro";
+import ServicesCarousel from "../components/ServicesCarousel.astro";
+import HeroSection from "../components/HeroSection.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import PricingSection from "../components/PricingSection.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import TestimonialsSection from "../components/TestimonialsSection.astro";
+
+import caseStudies from "../data/case_studies.json";
+import clients from "../data/clients.json";
+import faq from "../data/faq.json";
+import services from "../data/services.json";
+import home from "../data/home.json";
+import pricing from "../data/pricing.json";
+import global_settings from "../data/global_settings.json";
+import newsletter from "../data/newsletter.json";
+import testimonials from "../data/testimonials.json";
+
+// blackspike template imports
 
 // Get page data. In dev mode, we use the Tina client. In production, we use
 // static content from Astro's getCollection.
@@ -18,32 +44,34 @@ let homePage;
 if (import.meta.env.DEV) {
   // Use Tina client in development
   try {
-    data = await client.queries.page({relativePath: "home.mdx"});
+    data = await client.queries.page({ relativePath: "home.mdx" });
   } catch (error) {
-    console.log('TinaCMS client failed for home page, using static content. This is expected if the dev server is not running.');
+    console.log(
+      "TinaCMS client failed for home page, using static content. This is expected if the dev server is not running.",
+    );
   }
 }
 
 if (!data) {
   // Use static content for production builds or if Tina client fails
   const pages = await getCollection("page");
-  homePage = pages.find(page => page.id === 'home');
-  
+  homePage = pages.find((page) => page.id === "home");
+
   if (homePage) {
     content = homePage.body;
     data = {
       data: {
         page: {
           ...homePage.data,
-          body: homePage.body || '',
+          body: homePage.body || "",
           _sys: {
             filename: homePage.id,
-            relativePath: `${homePage.id}.mdx`
-          }
-        }
+            relativePath: `${homePage.id}.mdx`,
+          },
+        },
       },
       variables: {
-        relativePath: 'home.mdx'
+        relativePath: "home.mdx",
       },
       query: `query page($relativePath: String!) {
         page(relativePath: $relativePath) {
@@ -51,7 +79,7 @@ if (!data) {
             body
           }
         }
-      }`
+      }`,
     };
   } else {
     // Ultimate fallback
@@ -59,19 +87,19 @@ if (!data) {
     data = {
       data: {
         page: {
-          seoTitle: 'Home',
-          body: '# Welcome\n\nThis is the home page.',
+          seoTitle: "Home",
+          body: "# Welcome\n\nThis is the home page.",
           _sys: {
-            filename: 'home',
-            relativePath: 'home.mdx'
-          }
-        }
-      }
+            filename: "home",
+            relativePath: "home.mdx",
+          },
+        },
+      },
     };
   }
 }
 
-let html = '';
+let html = "";
 if (homePage && homePage.body) {
   html = marked(homePage.body);
 }
@@ -79,22 +107,56 @@ if (homePage && homePage.body) {
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={config.seo.title} description={config.seo.description} />
-	</head>
-	<body>
-		<Header />
-		{import.meta.env.DEV ? (
-			<HomePage {...data} client:tina />
-		) : (
-    <main>
-      {homePage ? (
-        <div set:html={html} />
+  <head>
+    <BaseHead title={config.seo.title} description={config.seo.description} />
+  </head>
+  <body>
+    <Header />
+    {
+      import.meta.env.DEV ? (
+        <HomePage {...data} client:tina />
       ) : (
-        <div set:html={content} />
-      )}
-    </main>
-		)}
-		<Footer />
-	</body>
+        <main>
+          {homePage ? <div set:html={html} /> : <div set:html={content} />}
+        </main>
+      )
+    }
+
+    <Layout title={global_settings.title}>
+      <HeroSection
+        content={home.hero_content}
+        settings={global_settings}
+        title={home.hero_title}
+      />
+
+      <ServicesCarousel services={services} title={home.services_title} />
+
+      <ClientsSection clients={clients} title={home.clients_title} />
+
+      <QuoteSection
+        cite={home.quote_cite}
+        content={home.quote_content}
+        image={home.quote_image}
+        role={home.quote_role}
+      />
+
+      <CaseStudiesSection
+        caseStudies={caseStudies}
+        title={home.case_studies_title}
+      />
+
+      <TestimonialsSection
+        testimonials={testimonials}
+        title={home.testimonials_title}
+      />
+
+      <PricingSection pricing={pricing} title={home.pricing_title} />
+
+      <FaqSection faq={faq} title={home.faq_title} />
+
+      <NewsletterSection newsletter={newsletter} />
+    </Layout>
+
+    <Footer />
+  </body>
 </html>
