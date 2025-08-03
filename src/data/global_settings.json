@@ -12,23 +12,23 @@
   "nav": [
     {
       "title": "Services",
-      "link": "/#services"
+      "link": "/drai-site/#services"
     },
     {
       "title": "Case studies",
-      "link": "/#case-studies"
+      "link": "/drai-site/#case-studies"
     },
     {
       "title": "Pricing",
-      "link": "/#pricing"
+      "link": "/drai-site/#pricing"
     },
     {
       "title": "FAQ",
-      "link": "/#faq"
+      "link": "/drai-site/#faq"
     },
     {
       "title": "Newsletter",
-      "link": "/#newsletter"
+      "link": "/drai-site/#newsletter"
     }
   ],
 

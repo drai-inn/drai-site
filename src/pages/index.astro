@@ -103,24 +103,27 @@ let html = "";
 if (homePage && homePage.body) {
   html = marked(homePage.body);
 }
+
+  // <head>
+  //   <BaseHead title={config.seo.title} description={config.seo.description} />
+  // </head>
+  // <body>
+  //   <Header />
+  //   {
+  //     import.meta.env.DEV ? (
+  //       <HomePage {...data} client:tina />
+  //     ) : (
+  //       <main>
+  //         {homePage ? <div set:html={html} /> : <div set:html={content} />}
+  //       </main>
+  //     )
+  //   }
+  // </body>
+
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <BaseHead title={config.seo.title} description={config.seo.description} />
-  </head>
-  <body>
-    <Header />
-    {
-      import.meta.env.DEV ? (
-        <HomePage {...data} client:tina />
-      ) : (
-        <main>
-          {homePage ? <div set:html={html} /> : <div set:html={content} />}
-        </main>
-      )
-    }
 
     <Layout title={global_settings.title}>
       <HeroSection
@@ -158,5 +161,5 @@ if (homePage && homePage.body) {
     </Layout>
 
     <Footer />
-  </body>
+
 </html>
