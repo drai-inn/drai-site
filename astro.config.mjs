@@ -14,13 +14,61 @@ export default defineConfig({
     // Your existing integrations
     integrations: [mdx(), sitemap(), react(), tinaDirective()],
 
-    vite: {
+    /* vite: {
         server: {
+            configureServer: (server) => {
+                server.middlewares.use((req, res, next) => {
+                    console.log(`[Vite] ${req.method} ${req.url}`);
+                    next();
+                });
+            },
             proxy: {
-                '/drai-site/admin': 'http://0.0.0.0:4001/admin',
-                '/admin': 'http://0.0.0.0:4001',
-                '/graphql': 'http://0.0.0.0:4001',
+                '/drai-site/admin/index.html': {
+                    target: 'http://localhost:4001/admin/index.html',
+                    changeOrigin: true,
+                    configure: (proxy, options) => {
+                        proxy.on('proxyReq', (proxyReq, req, res) => {
+                            console.log(`[ProxyReq] ${req.method} ${req.url} -> ${proxyReq.path}`);
+                        });
+                        proxy.on('proxyRes', (proxyRes, req, res) => {
+                            console.log(`[ProxyRes] ${req.method} ${req.url} - Status: ${proxyRes.statusCode}`);
+                        });
+                        proxy.on('error', (err, req, res) => {
+                            console.error(`[ProxyError] ${req.method} ${req.url} - ${err.message}`);
+                        });
+                    },
+                },
+                '/drai-site/admin': {
+                    target: 'http://localhost:4001/admin/index.html',
+                    changeOrigin: true,
+                    configure: (proxy, options) => {
+                        proxy.on('proxyReq', (proxyReq, req, res) => {
+                            console.log(`[ProxyReq] ${req.method} ${req.url} -> ${proxyReq.path}`);
+                        });
+                        proxy.on('proxyRes', (proxyRes, req, res) => {
+                            console.log(`[ProxyRes] ${req.method} ${req.url} - Status: ${proxyRes.statusCode}`);
+                        });
+                        proxy.on('error', (err, req, res) => {
+                            console.error(`[ProxyError] ${req.method} ${req.url} - ${err.message}`);
+                        });
+                    },
+                },
+                '/drai-site/graphql': {
+                    target: 'http://localhost:4001/graphql',
+                    changeOrigin: true,
+                    configure: (proxy, options) => {
+                        proxy.on('proxyReq', (proxyReq, req, res) => {
+                            console.log(`[ProxyReq] ${req.method} ${req.url} -> ${proxyReq.path}`);
+                        });
+                        proxy.on('proxyRes', (proxyRes, req, res) => {
+                            console.log(`[ProxyRes] ${req.method} ${req.url} - Status: ${proxyRes.statusCode}`);
+                        });
+                        proxy.on('error', (err, req, res) => {
+                            console.error(`[ProxyError] ${req.method} ${req.url} - ${err.message}`);
+                        });
+                    },
+                },
             },
         },
-    }
+    } */
 });
