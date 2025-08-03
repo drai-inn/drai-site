@@ -7,71 +7,70 @@ import Header from "../components/Header.astro";
 import BaseHead from "../components/BaseHead.astro";
 import config from '../content/config/config.json';
 import { Fragment } from "astro/types";
+import { marked } from "marked";
 
 export async function getStaticPaths() {
-	const pages = await getCollection("page");
-	return pages.map((p) => ({
-		params: { slug: p.id },
-		props: {
-			page: p,
-			getTinaProps: async () => {
-				// In dev mode, we use the Tina client. In production, we use
-				// static content from Astro's getCollection.
-				if (import.meta.env.DEV) {
-					try {
-						return await client.queries.page({
-							relativePath: p.data.tinaInfo.relativePath,
-						});
-					} catch (error) {
-						console.log('TinaCMS query failed for page, using static content. This is expected if the dev server is not running.');
-					}
-				}
-				// Fallback for static builds - return the page data in TinaCMS format
-				return {
-					data: {
-						page: {
-							...p.data,
-							body: p.body || '',
-							_sys: {
-								filename: p.id,
-								relativePath: `${p.id}.mdx`
-							}
-						}
-					},
-					variables: {
-						relativePath: `${p.id}.mdx`
-					},
-					query: `query page($relativePath: String!) {
-						page(relativePath: $relativePath) {
-							... on Page {
-								body
-							}
-						}
-					}`
-				};
-			},
-		},
-	}));
+    const pages = await getCollection("page");
+    return pages.map((p) => ({
+        params: { slug: p.id },
+        props: {
+            page: p,
+            getTinaProps: async () => {
+                if (import.meta.env.DEV) {
+                    try {
+                        return await client.queries.page({
+                            relativePath: p.data.tinaInfo.relativePath,
+                        });
+                    } catch (error) {
+                        console.log('TinaCMS query failed for page, using static content. This is expected if the dev server is not running.');
+                    }
+                }
+                return {
+                    data: {
+                        page: {
+                            ...p.data,
+                            body: p.body || '',
+                            _sys: {
+                                filename: p.id,
+                                relativePath: `${p.id}.mdx`
+                            }
+                        }
+                    },
+                    variables: {
+                        relativePath: `${p.id}.mdx`
+                    },
+                    query: `query page($relativePath: String!) {
+                        page(relativePath: $relativePath) {
+                            ... on Page {
+                                body
+                            }
+                        }
+                    }`
+                };
+            },
+        },
+    }));
 }
 
 const { page, getTinaProps } = Astro.props;
 const data = await getTinaProps();
+const html = marked(page.body || "");
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={data.data.page.seoTitle} description={config.seo.description} />
-	</head>
-	<body>
-		<Header />
-		{import.meta.env.DEV ? (
-			<Page {...data} client:tina />
-		) : (
-			<main>
-				<div set:html={page.body} />
-			</main>
-		)}
-		<Footer />
-	</body>
+    <head>
+        <BaseHead title={data.data.page.seoTitle} description={config.seo.description} />
+    </head>
+    <body>
+        <Header />
+        {import.meta.env.DEV ? (
+            <Page {...data} client:tina />
+        ) : (
+            <main>
+                <div set:html={html} />
+            </main>
+        )}
+        <Footer />
+    </body>
 </html>
