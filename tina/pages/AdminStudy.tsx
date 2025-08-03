@@ -1,14 +1,14 @@
 import React from 'react';
 import { tinaField, useTina } from "tinacms/dist/react";
-import type { CaseQuery, CaseQueryVariables } from '../__generated__/types';
+import type { StudyQuery, StudyQueryVariables } from '../__generated__/types';
 import { TinaMarkdown } from 'tinacms/dist/rich-text'
 import FormattedDate from '../../src/components/react/FormattedDate.tsx';
 import ReactMarkdown from 'react-markdown';
 
 
 type Props = {
-	variables: CaseQueryVariables;
-	data: CaseQuery;
+	variables: StudyQueryVariables;
+	data: StudyQuery;
 	query: string;
 }
 
@@ -20,7 +20,7 @@ export default function AdminStudy(props: Props) {
 		data: props.data,
 	})
 
-	const study = data.case;
+	const study = data.study;
 
 	// Helper to fix image paths with base URL
 	const getImageSrc = (heroImage: string) => {
