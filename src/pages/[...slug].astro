@@ -11,6 +11,7 @@ import { marked } from "marked";
 
 export async function getStaticPaths() {
     const pages = await getCollection("page");
+    
     return pages.map((p) => ({
         params: { slug: p.id },
         props: {
